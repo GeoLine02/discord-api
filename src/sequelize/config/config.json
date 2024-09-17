@@ -3,21 +3,21 @@
     "username": "discord",
     "password": "restart987",
     "database": "discord",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "postgres"
   },
   "test": {
     "username": "discord",
     "password": "restart987",
     "database": "database_test",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "postgres"
   },
   "production": {
     "username": "discord",
     "password": "restart987",
     "database": "discord",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "postgres"
   }
 }
