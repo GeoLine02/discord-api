@@ -1,4 +1,4 @@
-const { User, Token } = require("../sequelize/models");
+const { User } = require("../sequelize/models");
 const hashPassword = require("../helpers/bcrypt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -61,7 +61,7 @@ const authorizeUser = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "Strict", // Adjust as needed
+      sameSite: "Strict",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

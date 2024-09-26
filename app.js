@@ -4,11 +4,21 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 const app = express();
 const {
   app: { port },
 } = require("./src/config/index");
 const connetion = require("./src/postgresql");
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  },
+});
+const { socketHandler } = require("./src/socketIo");
 
 app.use(
   cors({
@@ -33,12 +43,17 @@ app.use(
     extended: true,
   })
 );
-
 app.use(cookieParser());
+socketHandler(io);
+
 const userRoutes = require("./src/routes/user.routes");
+const friendsRoutes = require("./src/routes/friends.routes");
 
 connetion();
 
 app.use("/user", userRoutes);
+app.use("/friend", friendsRoutes);
 
-app.listen(port, () => console.log(`App is up and running on port ${port}`));
+server.listen(port, () =>
+  console.log(`Server is up and running on port ${port}`)
+);
