@@ -3,8 +3,6 @@ const friendRequestHandler = require("./friendRequestEvents");
 console.log("connected users: ", connectedUsers);
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
-    console.log("A user coonnected: ", socket.id);
-
     socket.on("register", (username) => {
       console.log(`${username} registered with socket ID ${socket.id}`);
       connectedUsers[username] = socket.id;

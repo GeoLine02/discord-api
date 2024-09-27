@@ -2,8 +2,9 @@ const friendsController = require("../controller/friends.controller");
 
 const express = require("express");
 
-const routr = express.Router();
+const router = express.Router();
 
-routr.post("/friend-request/send", friendsController.sendFriendReuqest);
+router.get("/friend-request/get", friendsController.getAllFriendRequests);
+router.post("/friend-request/send", friendsController.sendFriendReuqest);
 
-module.exports = routr;
+module.exports = router;

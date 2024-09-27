@@ -2,8 +2,23 @@ const friendsService = require("../services/friends.service");
 
 const sendFriendReuqest = async (req, res) => {
   try {
-    const test = await friendsService.sendFriendRequest(req, res);
-    return test;
+    const sendedFriendRequest = await friendsService.sendFriendRequest(
+      req,
+      res
+    );
+    return sendedFriendRequest;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getAllFriendRequests = async (req, res) => {
+  try {
+    const allFriendRequests = await friendsService.getAllFriendRequests(
+      req,
+      res
+    );
+    return allFriendRequests;
   } catch (error) {
     console.log(error);
   }
@@ -11,4 +26,5 @@ const sendFriendReuqest = async (req, res) => {
 
 module.exports = {
   sendFriendReuqest,
+  getAllFriendRequests,
 };

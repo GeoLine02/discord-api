@@ -1,11 +1,4 @@
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
 const { User, FriendRequests } = require("../sequelize/models");
-const { connectedUsers } = require("../socketIo/index");
 const getFriends = async (req, res) => {
   try {
   } catch (error) {
@@ -17,30 +10,64 @@ const getFriends = async (req, res) => {
 const sendFriendRequest = async (req, res) => {
   try {
     const { senderId, username } = req.body;
-
+    // looks for receiver who's username is equal to req.body.username
     const receiver = await User.findOne({ where: { username } });
-    if (!receiver) {
-      return res.status(401).json({ message: "User not found" });
+
+    // if receiver not found or senders send request to themselves, server sends error 404
+    if (!receiver || senderId === receiver.id) {
+      return res.status(200).json({ message: "User not found" });
     }
 
+    const existingRequest = await FriendRequests.findOne({
+      where: {
+        senderId: senderId,
+        receiverId: receiver.id,
+      },
+    });
+
+    // if request already exists return eror 400
+    if (existingRequest) {
+      return res.status(200).json({ message: "Friend request already sent" });
+    }
+
+    // creates friend request
     const friendRequest = await FriendRequests.create({
       senderId: senderId,
       receiverId: receiver.id,
     });
 
-    const receiverSocketId = connectedUsers[receiver.username];
-    console.log("receiverSocketId", receiverSocketId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("receive-friend-request", {
-        username,
-        message: `You just received friend request from ${username}`,
-      });
-    }
-
     if (friendRequest) {
       return res
         .status(200)
         .json({ message: "Friend request sent successfuly" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const getAllFriendRequests = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    if (!userId) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const friendRequests = await FriendRequests.findAll({
+      where: { receiverId: userId },
+      include: [
+        {
+          model: User,
+          as: "Sender",
+          attributes: ["username"],
+        },
+      ],
+    });
+
+    if (friendRequests) {
+      return res.status(200).json({ friendRequests });
     }
   } catch (error) {
     console.log(error);
@@ -68,5 +95,6 @@ const acceptFriendRequest = async (req, res) => {
 module.exports = {
   getFriends,
   sendFriendRequest,
+  getAllFriendRequests,
   acceptFriendRequest,
 };
