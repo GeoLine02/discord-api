@@ -3,10 +3,12 @@ const friendRequestHandler = require("./friendRequestEvents");
 console.log("connected users: ", connectedUsers);
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
-    socket.on("register", (username) => {
-      console.log(`${username} registered with socket ID ${socket.id}`);
-      connectedUsers[username] = socket.id;
-      console.log("users: ", connectedUsers);
+    socket.on("register", async (username) => {
+      try {
+        console.log(`${username} registered with socket ID ${socket.id}`);
+        connectedUsers[username] = socket.id;
+        console.log("users: ", connectedUsers);
+      } catch (error) {}
     });
 
     friendRequestHandler(socket, io, connectedUsers);

@@ -1,6 +1,22 @@
-const { User, FriendRequests } = require("../sequelize/models");
+const { User, FriendRequests, FriendList } = require("../sequelize/models");
 const getFriends = async (req, res) => {
   try {
+    const { userId } = req.query;
+    console.log("userId: ", userId);
+    const friendlist = await FriendList.findAll({
+      where: { userId },
+      include: [
+        {
+          model: User,
+          as: "User",
+        },
+      ],
+      attributes: [],
+    });
+
+    if (friendlist) {
+      return res.status(200).json(friendlist);
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -25,7 +41,13 @@ const sendFriendRequest = async (req, res) => {
       },
     });
 
-    // if request already exists return eror 400
+    const isFriend = await FriendList.findOne({
+      where: { friendId: senderId, userId: receiver.id },
+    });
+    if (isFriend) {
+      console.log("SenderIdddddddd", senderId);
+      return res.status(200).json({ message: "User is already your friend" });
+    }
     if (existingRequest) {
       return res.status(200).json({ message: "Friend request already sent" });
     }
@@ -61,7 +83,6 @@ const getAllFriendRequests = async (req, res) => {
         {
           model: User,
           as: "Sender",
-          attributes: ["username"],
         },
       ],
     });
@@ -77,14 +98,38 @@ const getAllFriendRequests = async (req, res) => {
 
 const acceptFriendRequest = async (req, res) => {
   try {
-    const { requestId } = req.body;
+    const { senderId, receiverId } = req.body;
 
-    const requst = await FriendRequests.findeOne({ where: { requestId } });
+    const friendRequest = await FriendRequests.findOne({ where: { senderId } });
 
-    if (requst) {
+    if (friendRequest) {
+      await FriendList.bulkCreate([
+        { userId: senderId, friendId: receiverId, status: "accepted" },
+        { userId: receiverId, friendId: senderId, status: "accepted" },
+      ]);
+      await FriendRequests.destroy({
+        where: { senderId, receiverId },
+      });
+
+      return res.status(200).json({ message: "Successful acception" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const rejectFriendRequest = async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.query;
+
+    const rejectedRequest = await FriendRequests.destroy({
+      where: { senderId, receiverId },
+    });
+    if (rejectedRequest) {
       return res
         .status(200)
-        .json({ message: "Friend Request accepted successfuly" });
+        .json({ message: "Friend request rejected successfuly" });
     }
   } catch (error) {
     console.log(error);
@@ -97,4 +142,5 @@ module.exports = {
   sendFriendRequest,
   getAllFriendRequests,
   acceptFriendRequest,
+  rejectFriendRequest,
 };
