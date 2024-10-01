@@ -1,4 +1,4 @@
-const { User, Token } = require("../sequelize/models");
+const { User, FriendLists } = require("../sequelize/models");
 const hashPassword = require("../helpers/bcrypt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -10,6 +10,18 @@ const {
 const createUser = async (req, res) => {
   try {
     const { username, displayName, email, password } = req.body;
+
+    const isEmailUsed = await User.findOne({ where: { email } });
+
+    const isUsernameUsed = await User.findOne({ where: { username } });
+
+    if (isEmailUsed) {
+      return res.status(200).json({ message: "Email is already in use" });
+    }
+
+    if (isUsernameUsed) {
+      return res.status(200).json({ message: "Username is already in use" });
+    }
 
     const hashedPassword = await hashPassword(password);
 
@@ -24,13 +36,7 @@ const createUser = async (req, res) => {
       return res.status(201).json({ message: "User created successfuly" });
     }
   } catch (error) {
-    if (error.name === "SequelizeUniqueConstraintError") {
-      if (error.fields && error.fields.email) {
-        return res.status(400).json({ message: "Email is already in use" });
-      }
-    } else {
-      return res.status(500).json({ message: "internal server error" });
-    }
+    return res.status(500).json({ message: "internal server error" });
   }
 };
 
