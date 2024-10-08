@@ -48,11 +48,12 @@ socketHandler(io);
 
 const userRoutes = require("./src/routes/user.routes");
 const friendsRoutes = require("./src/routes/friends.routes");
-
+const serversRoutes = require("./src/routes/server.routes");
 connetion();
 
 app.use("/user", userRoutes);
 app.use("/friend", friendsRoutes);
+app.use("/server", serversRoutes);
 
 server.listen(port, () =>
   console.log(`Server is up and running on port ${port}`)

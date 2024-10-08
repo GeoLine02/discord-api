@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "friendId",
         otherKey: "userId",
       });
+      this.hasMany(models.Servers, {
+        foreignKey: "ownerId",
+        as: "ownedServers",
+      });
     }
   }
   User.init(
