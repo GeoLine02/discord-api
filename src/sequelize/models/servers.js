@@ -7,6 +7,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "ownerId",
         as: "owner",
       });
+      this.belongsToMany(models.User, {
+        through: models.ServerMemberJunctions,
+        foreignKey: "serverId",
+        as: "members",
+        onDelete: "CASCADE",
+      });
     }
   }
   Servers.init(

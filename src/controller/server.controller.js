@@ -27,8 +27,38 @@ const createServer = async (req, res) => {
   }
 };
 
+const joinServerByUrl = async (req, res) => {
+  try {
+    const joinedUser = await serverService.joinServerByUrl(req, res);
+    return joinedUser;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const joinServerByRequest = async (req, res) => {
+  try {
+    const joinedUser = await serverService.joinServerByRequest(req, res);
+    return joinedUser;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getServerInvites = async (req, res) => {
+  try {
+    const serverInvites = await serverService.getServerInvites(req, res);
+    return serverInvites;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createServer,
   getServersByOwner,
   getServerByName,
+  joinServerByUrl,
+  joinServerByRequest,
+  getServerInvites,
 };

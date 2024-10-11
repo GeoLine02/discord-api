@@ -3,16 +3,24 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      this.belongsToMany(models.Servers, {
+        through: models.ServerMemberJunctions,
+        foreignKey: "userId",
+        as: "joinedServers",
+      });
+
       this.belongsToMany(models.User, {
         through: models.FriendRequests,
         as: "SentRequest",
         foreignKey: "senderId",
+        onDelete: "CASCADE",
       });
 
       this.belongsToMany(models.User, {
         through: models.FriendRequests,
         as: "ReceivedRequest",
         foreignKey: "receiverId",
+        onDelete: "CASCADE",
       });
 
       this.belongsToMany(models.User, {
@@ -24,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Servers, {
         foreignKey: "ownerId",
         as: "ownedServers",
+        onDelete: "CASCADE",
       });
     }
   }

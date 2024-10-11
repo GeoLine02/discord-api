@@ -8,7 +8,7 @@ const getFriends = async (req, res) => {
       include: [
         {
           model: User,
-          as: "User",
+          as: "Friend",
         },
       ],
       attributes: [],
