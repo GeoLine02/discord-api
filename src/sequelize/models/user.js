@@ -3,6 +3,16 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      this.hasMany(models.DirectMessages, {
+        foreignKey: "senderId",
+        as: "sentMessage",
+      });
+
+      this.hasMany(models.DirectMessages, {
+        foreignKey: "receiverId",
+        as: "receivedMessage",
+      });
+
       this.belongsToMany(models.User, {
         through: models.FriendRequests,
         as: "SentRequest",

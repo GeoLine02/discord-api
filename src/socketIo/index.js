@@ -1,6 +1,8 @@
 const connectedUsers = {};
+
 const friendRequestHandler = require("./friendRequestEvents");
-console.log("connected users: ", connectedUsers);
+const liveChatEventHandler = require("./liveChatEvents");
+
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
     socket.on("register", async (username) => {
@@ -12,6 +14,8 @@ const socketHandler = (io) => {
     });
 
     friendRequestHandler(socket, io, connectedUsers);
+    liveChatEventHandler(socket, io, connectedUsers);
+
     socket.on("disconncet", () => {
       console.log("A user disconnect: ", socket.id);
       for (const userId in connectedUsers) {
