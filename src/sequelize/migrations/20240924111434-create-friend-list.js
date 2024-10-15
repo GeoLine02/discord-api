@@ -29,6 +29,11 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      DMVisibility: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       status: {
         type: Sequelize.ENUM("pending", "accepted", "rejected"),
         allowNull: false,

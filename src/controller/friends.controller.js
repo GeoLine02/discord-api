@@ -9,6 +9,15 @@ const getFriends = async (req, res) => {
   }
 };
 
+const getDMVisibleFriends = async (req, res) => {
+  try {
+    const DMVisibleFriends = await friendsService.getDMVisibleFriends(req, res);
+    return DMVisibleFriends;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const sendFriendReuqest = async (req, res) => {
   try {
     const sendedFriendRequest = await friendsService.sendFriendRequest(
@@ -55,6 +64,7 @@ const getAllFriendRequests = async (req, res) => {
 
 module.exports = {
   getFriends,
+  getDMVisibleFriends,
   sendFriendReuqest,
   acceptFriendRequest,
   getAllFriendRequests,

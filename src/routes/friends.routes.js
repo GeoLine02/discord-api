@@ -5,6 +5,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", friendsController.getFriends);
+router.get("/dm-visible-frinds", friendsController.getDMVisibleFriends);
 router.get("/friend-request/get", friendsController.getAllFriendRequests);
 router.post("/friend-request/send", friendsController.sendFriendReuqest);
 router.post("/friend-request/accept", friendsController.acceptFriendRequest);

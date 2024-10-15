@@ -1,5 +1,5 @@
 const { DirectMessages, User } = require("../sequelize/models");
-
+const { Op } = require("sequelize");
 const getDirectMesages = async (req, res) => {
   try {
     const { senderId, receiverId } = req.query;
@@ -9,8 +9,10 @@ const getDirectMesages = async (req, res) => {
 
     const directMessages = await DirectMessages.findAll({
       where: {
-        senderId,
-        receiverId,
+        [Op.or]: [
+          { senderId: senderId, receiverId: receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
       },
       include: [
         {

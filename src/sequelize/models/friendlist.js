@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: DataTypes.NUMBER,
       friendId: DataTypes.NUMBER,
+      DMVisibility: DataTypes.BOOLEAN,
     },
     {
       sequelize,
