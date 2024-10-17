@@ -18,8 +18,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   FriendList.init(
     {
-      userId: { type: DataTypes.INTEGER, allowNull: false },
-      friendId: { type: DataTypes.INTEGER, allowNull: false },
+      userId: DataTypes.NUMBER,
+      friendId: DataTypes.NUMBER,
+      DMVisibility: DataTypes.BOOLEAN,
     },
     {
       sequelize,

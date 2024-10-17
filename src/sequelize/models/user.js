@@ -8,6 +8,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "joinedServers",
       });
+      this.hasMany(models.DirectMessages, {
+        foreignKey: "senderId",
+        as: "sentMessage",
+      });
+
+      this.hasMany(models.DirectMessages, {
+        foreignKey: "receiverId",
+        as: "receivedMessage",
+      });
 
       this.belongsToMany(models.User, {
         through: models.FriendRequests,

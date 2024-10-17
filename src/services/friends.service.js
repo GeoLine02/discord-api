@@ -2,7 +2,6 @@ const { User, FriendRequests, FriendList } = require("../sequelize/models");
 const getFriends = async (req, res) => {
   try {
     const { userId } = req.query;
-    console.log("userId: ", userId);
     const friendlist = await FriendList.findAll({
       where: { userId },
       include: [
@@ -17,6 +16,28 @@ const getFriends = async (req, res) => {
     if (friendlist) {
       return res.status(200).json(friendlist);
     }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const getDMVisibleFriends = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const DMVisibleFriends = await FriendList.findAll({
+      where: {
+        userId,
+        DMVisibility: true,
+      },
+      include: [
+        {
+          model: User,
+          as: "Friend",
+        },
+      ],
+    });
+    return res.status(200).json(DMVisibleFriends);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -139,6 +160,7 @@ const rejectFriendRequest = async (req, res) => {
 
 module.exports = {
   getFriends,
+  getDMVisibleFriends,
   sendFriendRequest,
   getAllFriendRequests,
   acceptFriendRequest,
