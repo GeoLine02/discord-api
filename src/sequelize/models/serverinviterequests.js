@@ -1,10 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class SrverInviteRequests extends Model {
+  class ServerInviteRequests extends Model {
     static associate(models) {}
   }
-  SrverInviteRequests.init(
+  ServerInviteRequests.init(
     {
       serverId: {
         type: DataTypes.INTEGER,
@@ -36,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "SrverInviteRequests",
+      modelName: "ServerInviteRequests",
     }
   );
-  return SrverInviteRequests;
+  return ServerInviteRequests;
 };

@@ -9,9 +9,17 @@ const getServersByOwner = async (req, res) => {
   }
 };
 
+const getServers = async (req, res) => {
+  try {
+    const serverList = serverService.getServers(req, res);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getServerByName = async (req, res) => {
   try {
-    const server = await serverService.getServerByName(req, res);
+    const server = await serverService.getServerById(req, res);
     return server;
   } catch (error) {
     console.log(error);
@@ -55,6 +63,7 @@ const getServerInvites = async (req, res) => {
 };
 
 module.exports = {
+  getServers,
   createServer,
   getServersByOwner,
   getServerByName,

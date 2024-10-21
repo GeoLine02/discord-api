@@ -33,6 +33,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      contentType: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "text",
+      },
+      serverId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

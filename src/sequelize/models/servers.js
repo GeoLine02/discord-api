@@ -3,6 +3,12 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Servers extends Model {
     static associate(models) {
+      this.hasMany(models.DirectMessages, {
+        foreignKey: "serverId", // The foreign key in DirectMessages
+        as: "messages", // Alias for the association
+        onDelete: "CASCADE", // If a server is deleted, delete related messages
+      });
+
       this.belongsTo(models.User, {
         foreignKey: "ownerId",
         as: "owner",

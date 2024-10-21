@@ -1,7 +1,7 @@
 const {
   Servers,
   ServerMemberJunctions,
-  SrverInviteRequests,
+  ServerInviteRequests,
 } = require("../sequelize/models");
 
 const getServersByOwner = async (req, res) => {
@@ -23,9 +23,33 @@ const getServersByOwner = async (req, res) => {
   }
 };
 
+const getServers = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const serverList = await ServerMemberJunctions.findAll({
+      where: {
+        userId,
+      },
+      include: [
+        {
+          model: Servers,
+          as: "server",
+        },
+      ],
+    });
+    if (serverList) {
+      return res.status(200).json(serverList);
+    }
+  } catch (erorr) {
+    console.log(erorr);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
 const getServerById = async (req, res) => {
   try {
     const serverId = req.query.serverId;
+
     const server = await Servers.findOne({ where: { id: serverId } });
 
     if (server) {
@@ -102,7 +126,8 @@ const joinServerByUrl = async (req, res) => {
 const joinServerByRequest = async (req, res) => {
   try {
     const { serverId, senderId, receiverId } = req.body;
-    const joinedUser = await SrverInviteRequests.create({
+
+    const joinedUser = await ServerInviteRequests.create({
       senderId,
       receiverId,
       serverId,
@@ -122,7 +147,7 @@ const joinServerByRequest = async (req, res) => {
 const getServerInvites = async (req, res) => {
   const { userId } = req.query;
   try {
-    const serverInvites = await SrverInviteRequests.findAll({
+    const serverInvites = await ServerInviteRequests.findAll({
       where: {
         receiverId: userId,
       },
@@ -140,6 +165,7 @@ module.exports = {
   createServer,
   getServersByOwner,
   getServerById,
+  getServers,
   joinServerByUrl,
   joinServerByRequest,
   getServerInvites,
