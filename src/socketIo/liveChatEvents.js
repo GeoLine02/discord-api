@@ -13,9 +13,18 @@ const liveChatEventsHandler = (socket, io, connectedUsers) => {
           content,
         });
 
+        const rowCount = await DirectMessages.findAndCountAll();
+
         io.to(connectedUsers[receiver?.username]).emit(
           "message-received-from-friend",
-          { content, sender, sentDate, receiver }
+          {
+            id: rowCount.count,
+            content,
+            sender,
+            sentDate,
+            receiver,
+            contentType: "text",
+          }
         );
       }
     } catch (erorr) {

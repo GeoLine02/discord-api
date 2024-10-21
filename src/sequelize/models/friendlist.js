@@ -6,11 +6,13 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         foreignKey: "userId",
         as: "User",
+        onDelete: "CASCADE",
       });
 
       this.belongsTo(models.User, {
         foreignKey: "friendId",
         as: "Friend",
+        onDelete: "CASCADE",
       });
     }
   }

@@ -1,4 +1,4 @@
-const { DirectMessages, User } = require("../sequelize/models");
+const { DirectMessages, User, Servers } = require("../sequelize/models");
 const { Op } = require("sequelize");
 const getDirectMesages = async (req, res) => {
   try {
@@ -23,8 +23,10 @@ const getDirectMesages = async (req, res) => {
           model: User,
           as: "receiver",
         },
+        { model: Servers, as: "server", required: false },
       ],
     });
+
     return res.status(200).json(directMessages);
   } catch (erorr) {
     console.log(erorr);
