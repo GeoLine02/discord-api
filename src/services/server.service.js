@@ -2,13 +2,18 @@ const {
   Servers,
   ServerMemberJunctions,
   ServerInviteRequests,
+  Channels,
 } = require("../sequelize/models");
+const channelsService = require("../services/channels.service");
 
 const getServersByOwner = async (req, res) => {
   try {
     const ownerId = req.query.ownerId;
-    console.log("ownerId", ownerId);
-    const servers = await Servers.findAll({ where: { ownerId } });
+
+    const servers = await Servers.findAll({
+      where: { ownerId },
+      include: [{ model: Channels, as: "channels" }],
+    });
 
     if (!servers) {
       return res.status(404).json({ message: "servers not found" });
@@ -34,6 +39,12 @@ const getServers = async (req, res) => {
         {
           model: Servers,
           as: "server",
+          include: [
+            {
+              model: Channels,
+              as: "channels",
+            },
+          ],
         },
       ],
     });
@@ -61,7 +72,7 @@ const getServerById = async (req, res) => {
   }
 };
 
-const createServer = async (req, res) => {
+const createServerWithChannel = async (req, res) => {
   try {
     const {
       serverName,
@@ -79,16 +90,24 @@ const createServer = async (req, res) => {
         .json({ message: "server with this name already exists" });
     }
 
-    const createdServer = await Servers.create({
+    const newServer = await Servers.create({
       serverName,
       serverTemplate,
       serverCommunity,
       ownerId,
       serverImage,
     });
-    if (createdServer) {
-      return res.status(201).json({ message: "Server created successfuly" });
-    }
+    const channel = await channelsService.createTextChannel(
+      {
+        body: {
+          serverId: newServer.id,
+          serverTemplate,
+        },
+      },
+      res
+    );
+
+    return res.status(201).json({ server: newServer, channel });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "internal server error" });
@@ -162,7 +181,7 @@ const getServerInvites = async (req, res) => {
 };
 
 module.exports = {
-  createServer,
+  createServerWithChannel,
   getServersByOwner,
   getServerById,
   getServers,

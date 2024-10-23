@@ -26,9 +26,9 @@ const getServerByName = async (req, res) => {
   }
 };
 
-const createServer = async (req, res) => {
+const createServerWithChannel = async (req, res) => {
   try {
-    const createdServer = await serverService.createServer(req, res);
+    const createdServer = await serverService.createServerWithChannel(req, res);
     return createdServer;
   } catch (error) {
     console.log(error);
@@ -64,7 +64,7 @@ const getServerInvites = async (req, res) => {
 
 module.exports = {
   getServers,
-  createServer,
+  createServerWithChannel,
   getServersByOwner,
   getServerByName,
   joinServerByUrl,
