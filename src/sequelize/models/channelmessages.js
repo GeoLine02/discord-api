@@ -1,26 +1,21 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Channels extends Model {
+  class ChannelMessages extends Model {
     static associate(models) {
-      this.hasMany(models.ChannelMessages, {
+      this.belongsTo(models.Channels, {
         foreignKey: "channelName",
-        as: "channel",
-      });
-
-      this.belongsTo(models.Servers, {
-        foreignKey: "serverId",
-        as: "channels",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+        as: "channelMessages",
       });
     }
   }
-  Channels.init(
+  ChannelMessages.init(
     {
       serverId: { type: DataTypes.INTEGER, allowNull: false },
       channelName: { type: DataTypes.STRING, allowNull: false },
-      channelType: {
+      senderId: { type: DataTypes.INTEGER, allowNull: false },
+      content: { type: DataTypes.STRING, allowNull: false },
+      contentType: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: "text",
@@ -28,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Channels",
+      modelName: "ChannelMessages",
     }
   );
-  return Channels;
+  return ChannelMessages;
 };
