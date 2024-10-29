@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasMany(models.ChannelMessages, {
         foreignKey: "channelName",
-        as: "channel",
+        as: "server",
       });
 
       this.belongsTo(models.Servers, {

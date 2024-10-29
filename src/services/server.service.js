@@ -6,28 +6,6 @@ const {
 } = require("../sequelize/models");
 const channelsService = require("../services/channels.service");
 
-const getServersByOwner = async (req, res) => {
-  try {
-    const ownerId = req.query.ownerId;
-
-    const servers = await Servers.findAll({
-      where: { ownerId },
-      include: [{ model: Channels, as: "channels" }],
-    });
-
-    if (!servers) {
-      return res.status(404).json({ message: "servers not found" });
-    }
-
-    if (servers) {
-      return res.status(200).json(servers);
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "internal server error" });
-  }
-};
-
 const getServers = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -61,7 +39,15 @@ const getServerById = async (req, res) => {
   try {
     const serverId = req.query.serverId;
 
-    const server = await Servers.findOne({ where: { id: serverId } });
+    const server = await Servers.findOne({
+      where: { id: serverId },
+      include: [
+        {
+          model: Channels,
+          as: "channels",
+        },
+      ],
+    });
 
     if (server) {
       return res.status(200).json(server);
@@ -92,12 +78,13 @@ const createServerWithChannel = async (req, res) => {
 
     const newServer = await Servers.create({
       serverName,
-      serverTemplate,
-      serverCommunity,
+      serverTemplate: serverTemplate.templateType,
+      serverCommunity: serverCommunity.templateType,
       ownerId,
       serverImage,
     });
-    const channel = await channelsService.createTextChannel(
+
+    const textChannel = await channelsService.createTextChannel(
       {
         body: {
           serverId: newServer.id,
@@ -107,7 +94,23 @@ const createServerWithChannel = async (req, res) => {
       res
     );
 
-    return res.status(201).json({ server: newServer, channel });
+    const voiceChannel = await channelsService.createVoiceChannel({
+      body: {
+        serverId: newServer.id,
+        serverTemplate,
+      },
+      res,
+    });
+
+    await ServerMemberJunctions.create({
+      serverId: newServer.id,
+      userId: ownerId,
+      status: "owner",
+    });
+
+    return res
+      .status(201)
+      .json({ server: newServer, textChannel, voiceChannel });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "internal server error" });
@@ -182,7 +185,6 @@ const getServerInvites = async (req, res) => {
 
 module.exports = {
   createServerWithChannel,
-  getServersByOwner,
   getServerById,
   getServers,
   joinServerByUrl,

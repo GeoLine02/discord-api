@@ -1,4 +1,10 @@
-const { DirectMessages, User, Servers } = require("../sequelize/models");
+const {
+  DirectMessages,
+  User,
+  Servers,
+  Channels,
+  ChannelMessages,
+} = require("../sequelize/models");
 const { Op } = require("sequelize");
 const getDirectMesages = async (req, res) => {
   try {
@@ -23,7 +29,12 @@ const getDirectMesages = async (req, res) => {
           model: User,
           as: "receiver",
         },
-        { model: Servers, as: "server", required: false },
+        {
+          model: Servers,
+          as: "server",
+          required: false,
+          include: [{ model: Channels, as: "channels" }],
+        },
       ],
     });
 
@@ -34,6 +45,31 @@ const getDirectMesages = async (req, res) => {
   }
 };
 
+const getChannelMessages = async (req, res) => {
+  try {
+    const { serverId, channelName } = req.query;
+    const channelMessages = await ChannelMessages.findAll({
+      where: {
+        serverId,
+        channelName,
+      },
+      include: [
+        {
+          model: User,
+          as: "sender",
+        },
+      ],
+    });
+    if (channelMessages) {
+      return res.status(200).json(channelMessages);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
 module.exports = {
   getDirectMesages,
+  getChannelMessages,
 };

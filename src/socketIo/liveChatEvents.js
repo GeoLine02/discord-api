@@ -1,4 +1,4 @@
-const { DirectMessages } = require("../sequelize/models");
+const { DirectMessages, ChannelMessages } = require("../sequelize/models");
 
 const liveChatEventsHandler = (socket, io, connectedUsers) => {
   // send message to friend

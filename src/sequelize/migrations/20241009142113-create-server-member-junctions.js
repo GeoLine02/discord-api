@@ -12,6 +12,7 @@ module.exports = {
       serverId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        foreignKey: true,
         references: {
           model: "Servers",
           key: "id",
@@ -22,6 +23,7 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        foreignKey: true,
         references: {
           model: "Users",
           key: "id",

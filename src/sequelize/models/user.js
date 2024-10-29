@@ -3,6 +3,11 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      this.hasMany(models.ChannelMessages, {
+        foreignKey: "senderId",
+        as: "sentChannelMessage",
+      });
+
       this.belongsToMany(models.Servers, {
         through: models.ServerMemberJunctions,
         foreignKey: "userId",

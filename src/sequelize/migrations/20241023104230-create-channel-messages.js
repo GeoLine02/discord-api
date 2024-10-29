@@ -12,6 +12,13 @@ module.exports = {
       serverId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        foreignKey: true,
+        references: {
+          model: "Servers",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       channelName: {
         type: Sequelize.STRING,
@@ -20,6 +27,12 @@ module.exports = {
       senderId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       content: {
         type: Sequelize.STRING,

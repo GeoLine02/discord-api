@@ -13,6 +13,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         foreignKey: true,
+        references: {
+          model: "Servers",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       channelName: {
         type: Sequelize.STRING,
