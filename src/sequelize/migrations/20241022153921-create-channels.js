@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("ServerMemberJunctions", {
+    await queryInterface.createTable("Channels", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,23 +17,17 @@ module.exports = {
           model: "Servers",
           key: "id",
         },
-        onUpdate: "CASCADE",
         onDelete: "CASCADE",
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        foreignKey: true,
-        references: {
-          model: "Users",
-          key: "id",
-        },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
-      status: {
+      channelName: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      channelType: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "text",
       },
       createdAt: {
         allowNull: false,
@@ -46,6 +40,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("ServerMemberJunctions");
+    await queryInterface.dropTable("Channels");
   },
 };

@@ -9,6 +9,16 @@ const getDirectMesages = async (req, res) => {
   }
 };
 
+const getChannelMessages = async (req, res) => {
+  try {
+    const channelMessages = await messagesService.getChannelMessages(req, res);
+    return channelMessages;
+  } catch (erorr) {
+    console.log(erorr);
+  }
+};
+
 module.exports = {
   getDirectMesages,
+  getChannelMessages,
 };

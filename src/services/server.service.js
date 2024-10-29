@@ -2,26 +2,9 @@ const {
   Servers,
   ServerMemberJunctions,
   ServerInviteRequests,
+  Channels,
 } = require("../sequelize/models");
-
-const getServersByOwner = async (req, res) => {
-  try {
-    const ownerId = req.query.ownerId;
-    console.log("ownerId", ownerId);
-    const servers = await Servers.findAll({ where: { ownerId } });
-
-    if (!servers) {
-      return res.status(404).json({ message: "servers not found" });
-    }
-
-    if (servers) {
-      return res.status(200).json(servers);
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "internal server error" });
-  }
-};
+const channelsService = require("../services/channels.service");
 
 const getServers = async (req, res) => {
   try {
@@ -34,6 +17,12 @@ const getServers = async (req, res) => {
         {
           model: Servers,
           as: "server",
+          include: [
+            {
+              model: Channels,
+              as: "channels",
+            },
+          ],
         },
       ],
     });
@@ -50,7 +39,15 @@ const getServerById = async (req, res) => {
   try {
     const serverId = req.query.serverId;
 
-    const server = await Servers.findOne({ where: { id: serverId } });
+    const server = await Servers.findOne({
+      where: { id: serverId },
+      include: [
+        {
+          model: Channels,
+          as: "channels",
+        },
+      ],
+    });
 
     if (server) {
       return res.status(200).json(server);
@@ -61,7 +58,7 @@ const getServerById = async (req, res) => {
   }
 };
 
-const createServer = async (req, res) => {
+const createServerWithChannel = async (req, res) => {
   try {
     const {
       serverName,
@@ -79,16 +76,41 @@ const createServer = async (req, res) => {
         .json({ message: "server with this name already exists" });
     }
 
-    const createdServer = await Servers.create({
+    const newServer = await Servers.create({
       serverName,
-      serverTemplate,
-      serverCommunity,
+      serverTemplate: serverTemplate.templateType,
+      serverCommunity: serverCommunity.templateType,
       ownerId,
       serverImage,
     });
-    if (createdServer) {
-      return res.status(201).json({ message: "Server created successfuly" });
-    }
+
+    const textChannel = await channelsService.createTextChannel(
+      {
+        body: {
+          serverId: newServer.id,
+          serverTemplate,
+        },
+      },
+      res
+    );
+
+    const voiceChannel = await channelsService.createVoiceChannel({
+      body: {
+        serverId: newServer.id,
+        serverTemplate,
+      },
+      res,
+    });
+
+    await ServerMemberJunctions.create({
+      serverId: newServer.id,
+      userId: ownerId,
+      status: "owner",
+    });
+
+    return res
+      .status(201)
+      .json({ server: newServer, textChannel, voiceChannel });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "internal server error" });
@@ -162,8 +184,7 @@ const getServerInvites = async (req, res) => {
 };
 
 module.exports = {
-  createServer,
-  getServersByOwner,
+  createServerWithChannel,
   getServerById,
   getServers,
   joinServerByUrl,

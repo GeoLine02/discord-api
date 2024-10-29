@@ -50,12 +50,14 @@ const userRoutes = require("./src/routes/user.routes");
 const friendsRoutes = require("./src/routes/friends.routes");
 const serversRoutes = require("./src/routes/server.routes");
 const messagesRoutes = require("./src/routes/messages.routes");
+const channelsRoutes = require("./src/routes/channels.routes");
 connetion();
 
 app.use("/user", userRoutes);
 app.use("/friend", friendsRoutes);
 app.use("/server", serversRoutes);
 app.use("/messages", messagesRoutes);
+app.use("/channels", channelsRoutes);
 
 server.listen(port, () =>
   console.log(`Server is up and running on port ${port}`)

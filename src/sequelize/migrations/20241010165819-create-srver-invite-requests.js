@@ -11,12 +11,30 @@ module.exports = {
       },
       serverId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Servers",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       senderId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       receiverId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       createdAt: {
         allowNull: false,

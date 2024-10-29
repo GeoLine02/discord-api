@@ -1,17 +1,9 @@
 const serverService = require("../services/server.service");
 
-const getServersByOwner = async (req, res) => {
-  try {
-    const servers = await serverService.getServersByOwner(req, res);
-    return servers;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const getServers = async (req, res) => {
   try {
     const serverList = serverService.getServers(req, res);
+    return serverList;
   } catch (error) {
     console.log(error);
   }
@@ -26,9 +18,9 @@ const getServerByName = async (req, res) => {
   }
 };
 
-const createServer = async (req, res) => {
+const createServerWithChannel = async (req, res) => {
   try {
-    const createdServer = await serverService.createServer(req, res);
+    const createdServer = await serverService.createServerWithChannel(req, res);
     return createdServer;
   } catch (error) {
     console.log(error);
@@ -64,8 +56,7 @@ const getServerInvites = async (req, res) => {
 
 module.exports = {
   getServers,
-  createServer,
-  getServersByOwner,
+  createServerWithChannel,
   getServerByName,
   joinServerByUrl,
   joinServerByRequest,
