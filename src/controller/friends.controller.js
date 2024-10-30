@@ -62,9 +62,22 @@ const getAllFriendRequests = async (req, res) => {
   }
 };
 
+const updateFriendDmVisibility = async (req, res) => {
+  try {
+    const updatedVisibility = await friendsService.upadteFriendDmVisibility(
+      req,
+      res
+    );
+    return updatedVisibility;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   getFriends,
   getDMVisibleFriends,
+  updateFriendDmVisibility,
   sendFriendReuqest,
   acceptFriendRequest,
   getAllFriendRequests,

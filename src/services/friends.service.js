@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { User, FriendRequests, FriendList } = require("../sequelize/models");
 const getFriends = async (req, res) => {
   try {
@@ -125,8 +126,18 @@ const acceptFriendRequest = async (req, res) => {
 
     if (friendRequest) {
       await FriendList.bulkCreate([
-        { userId: senderId, friendId: receiverId, status: "accepted" },
-        { userId: receiverId, friendId: senderId, status: "accepted" },
+        {
+          userId: senderId,
+          friendId: receiverId,
+          status: "accepted",
+          DMVisibility: true,
+        },
+        {
+          userId: receiverId,
+          friendId: senderId,
+          status: "accepted",
+          DMVisibility: true,
+        },
       ]);
       await FriendRequests.destroy({
         where: { senderId, receiverId },
@@ -158,11 +169,60 @@ const rejectFriendRequest = async (req, res) => {
   }
 };
 
+const deleteFriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.query;
+    const deletedFriend = await FriendList.destroy({
+      where: {
+        userId,
+        friendId,
+      },
+    });
+
+    if (deletedFriend) {
+      return res.status(200).json({ message: "user deleted successfully" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const upadteFriendDmVisibility = async (req, res) => {
+  try {
+    const { userId, friendId, visibility } = req.body;
+    if (!friendId) {
+      return res.status(400).json({
+        message: "user id is required",
+      });
+    }
+    const updatedVisibility = await FriendList.update(
+      { DMVisibility: visibility },
+      {
+        where: {
+          userId: userId,
+          friendId: friendId,
+        },
+      }
+    );
+    if (updatedVisibility) {
+      return res
+        .status(201)
+        .json({ message: "visibility changed successfully" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
 module.exports = {
   getFriends,
   getDMVisibleFriends,
+  upadteFriendDmVisibility,
   sendFriendRequest,
   getAllFriendRequests,
   acceptFriendRequest,
   rejectFriendRequest,
+  deleteFriend,
 };

@@ -1,5 +1,11 @@
-const { User, FriendRequests, FriendList } = require("../sequelize/models");
-
+const {
+  User,
+  FriendRequests,
+  FriendList,
+  sequelize,
+} = require("../sequelize/models");
+const { Op } = require("sequelize");
+const friendsService = require("../services/friends.service");
 const friendRequestHandler = (socket, io, connectedUsers) => {
   // friend request sender event
   socket.on(
@@ -62,6 +68,26 @@ const friendRequestHandler = (socket, io, connectedUsers) => {
     io.to(receiver).emit("friend-request-accepted", user, () => {
       console.log("friend request accepted");
     });
+  });
+
+  socket.on("delete-friend", async (params) => {
+    const { userId, friendId, username } = params;
+    try {
+      const deletedFriend = await FriendList.destroy({
+        where: {
+          [Op.or]: [
+            { userId: userId, friendId: friendId },
+            { userId: friendId, friendId: userId },
+          ],
+        },
+      });
+
+      if (deletedFriend) {
+        io.to(connectedUsers[username]).emit("deleted-friend", userId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 
