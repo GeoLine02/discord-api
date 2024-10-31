@@ -1,4 +1,4 @@
-const { ChannelMessages } = require("../sequelize/models");
+const { ChannelMessages, Channels } = require("../sequelize/models");
 
 const channelEventsHandler = (socket, io) => {
   socket.on("send-message-to-channel", async (messageObj) => {
@@ -16,6 +16,22 @@ const channelEventsHandler = (socket, io) => {
     console.log(`Sending message to ${serverName}`);
     io.to(serverName).emit("message-received-on-server", messageObj);
   });
+
+  socket.on(
+    "create-channel",
+    async ({ serverId, channelName, channelType, serverName }) => {
+      await Channels.create({
+        serverId,
+        channelName,
+        channelType,
+      });
+      io.to(serverName).emit("new-channel-created", {
+        serverId,
+        channelName,
+        channelType,
+      });
+    }
+  );
 };
 
 module.exports = channelEventsHandler;
