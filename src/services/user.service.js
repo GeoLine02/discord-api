@@ -114,9 +114,20 @@ const refreshAccessToken = async (req, res) => {
   }
 };
 
+const logOut = async (req, res) => {
+  try {
+    res.clearCookie("refreshToken");
+    res.status(200).json({ message: "cookie deleted successfuly" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
 module.exports = {
   createUser,
   authorizeUser,
   refreshAccessToken,
   getUser,
+  logOut,
 };

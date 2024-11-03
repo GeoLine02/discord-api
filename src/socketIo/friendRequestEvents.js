@@ -5,7 +5,6 @@ const {
   sequelize,
 } = require("../sequelize/models");
 const { Op } = require("sequelize");
-const friendsService = require("../services/friends.service");
 const friendRequestHandler = (socket, io, connectedUsers) => {
   // friend request sender event
   socket.on(
@@ -88,6 +87,31 @@ const friendRequestHandler = (socket, io, connectedUsers) => {
     } catch (error) {
       console.log(error);
     }
+  });
+
+  socket.on("get-online-friends", (friendList, user) => {
+    console.log(connectedUsers);
+    console.log(friendList, user);
+    const onlineFriends = [];
+    console.log("keys: ", Object.keys(connectedUsers));
+    friendList.map((friend) => {
+      return Object.keys(connectedUsers).map((key) => {
+        console.log(key, friend?.Friend?.username);
+        if (friend?.Friend?.username === key) {
+          console.log("enters");
+          return onlineFriends.push({
+            id: friend?.Friend?.id,
+            username: friend?.Friend?.username,
+          });
+        }
+      });
+    });
+    console.log("@@@@@@@@@@@@@@@@@", onlineFriends);
+    console.log("user", user);
+    io.to(connectedUsers[user?.username]).emit(
+      "receive-online-friends",
+      onlineFriends
+    );
   });
 };
 

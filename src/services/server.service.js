@@ -3,6 +3,7 @@ const {
   ServerMemberJunctions,
   ServerInviteRequests,
   Channels,
+  User,
 } = require("../sequelize/models");
 const channelsService = require("../services/channels.service");
 
@@ -183,6 +184,29 @@ const getServerInvites = async (req, res) => {
   }
 };
 
+const getServerMemebers = async (req, res) => {
+  try {
+    const { serverId } = req.query;
+    const serverMembers = await ServerMemberJunctions.findAll({
+      where: {
+        serverId: serverId,
+      },
+      include: [
+        {
+          model: User,
+          as: "member",
+        },
+      ],
+    });
+    if (serverMembers) {
+      return res.status(200).json(serverMembers);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
 module.exports = {
   createServerWithChannel,
   getServerById,
@@ -190,4 +214,5 @@ module.exports = {
   joinServerByUrl,
   joinServerByRequest,
   getServerInvites,
+  getServerMemebers,
 };

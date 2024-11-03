@@ -31,8 +31,9 @@ const socketHandler = (io) => {
     serverInvitaionEventHandler(socket, io, connectedUsers);
     channelEventHandlers(socket, io, connectedServers);
 
-    socket.on("disconncet", () => {
+    socket.on("disconnect", async () => {
       console.log("A user disconnect: ", socket.id);
+
       for (const userId in connectedUsers) {
         if (connectedUsers[userId] === socket.id) {
           delete connectedUsers[userId];

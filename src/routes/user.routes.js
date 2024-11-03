@@ -6,5 +6,6 @@ router.get("/", userController.getUser);
 router.post("/create", userController.createUser);
 router.post("/authorize", userController.authorizeUser);
 router.get("/refreshToken", userController.refreshAccessToken);
+router.get("/logout", userController.logOut);
 
 module.exports = router;

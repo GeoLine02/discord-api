@@ -54,6 +54,15 @@ const getServerInvites = async (req, res) => {
   }
 };
 
+const getServerMemebers = async (req, res) => {
+  try {
+    const serverMembers = await serverService.getServerMemebers(req, res);
+    return serverMembers;
+  } catch (erorr) {
+    console.log(erorr);
+  }
+};
+
 module.exports = {
   getServers,
   createServerWithChannel,
@@ -61,4 +70,5 @@ module.exports = {
   joinServerByUrl,
   joinServerByRequest,
   getServerInvites,
+  getServerMemebers,
 };

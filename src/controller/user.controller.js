@@ -44,9 +44,18 @@ const refreshAccessToken = async (req, res) => {
   }
 };
 
+const logOut = async (req, res) => {
+  try {
+    const removedCookie = await userService.logOut(req, res);
+    return removedCookie;
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   createUser,
   authorizeUser,
   refreshAccessToken,
   getUser,
+  logOut,
 };

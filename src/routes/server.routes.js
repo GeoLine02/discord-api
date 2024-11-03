@@ -2,6 +2,7 @@ const serverController = require("../controller/server.controller");
 const express = require("express");
 const router = express.Router();
 
+router.get("/server-members", serverController.getServerMemebers);
 router.get("/", serverController.getServers);
 router.get("/requests", serverController.getServerInvites);
 router.get("/by-name", serverController.getServerByName);
