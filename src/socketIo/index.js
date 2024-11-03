@@ -5,7 +5,6 @@ const friendRequestHandler = require("./friendRequestEvents");
 const liveChatEventHandler = require("./liveChatEvents");
 const serverInvitaionEventHandler = require("./serverInvitationEvents");
 const channelEventHandlers = require("./channelEvents");
-const { server } = require("typescript");
 
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
