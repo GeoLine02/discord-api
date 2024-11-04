@@ -10,7 +10,7 @@ const app = express();
 const {
   app: { port },
 } = require("./src/config/index");
-const connetion = require("./src/postgresql");
+const connection = require("./src/postgresql");
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -51,7 +51,7 @@ const friendsRoutes = require("./src/routes/friends.routes");
 const serversRoutes = require("./src/routes/server.routes");
 const messagesRoutes = require("./src/routes/messages.routes");
 const channelsRoutes = require("./src/routes/channels.routes");
-connetion();
+connection();
 
 app.use("/user", userRoutes);
 app.use("/friend", friendsRoutes);
