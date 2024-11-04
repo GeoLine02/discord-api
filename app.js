@@ -44,7 +44,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-socketHandler(io);
 
 const userRoutes = require("./src/routes/user.routes");
 const friendsRoutes = require("./src/routes/friends.routes");
@@ -58,6 +57,7 @@ app.use("/friend", friendsRoutes);
 app.use("/server", serversRoutes);
 app.use("/messages", messagesRoutes);
 app.use("/channels", channelsRoutes);
+socketHandler(io);
 
 server.listen(port, () =>
   console.log(`Server is up and running on port ${port}`)
