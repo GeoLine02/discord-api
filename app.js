@@ -6,11 +6,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { connectDB } = require("./src/db");
 const app = express();
-const {
-  app: { port },
-} = require("./src/config/index");
-const connection = require("./src/postgresql");
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -50,8 +47,7 @@ const friendsRoutes = require("./src/routes/friends.routes");
 const serversRoutes = require("./src/routes/server.routes");
 const messagesRoutes = require("./src/routes/messages.routes");
 const channelsRoutes = require("./src/routes/channels.routes");
-connection();
-
+connectDB();
 app.use("/user", userRoutes);
 app.use("/friend", friendsRoutes);
 app.use("/server", serversRoutes);
@@ -59,6 +55,8 @@ app.use("/messages", messagesRoutes);
 app.use("/channels", channelsRoutes);
 socketHandler(io);
 
-server.listen(port, () =>
-  console.log(`Server is up and running on port ${port}`)
+const PORT = process.env.PORT || 5432;
+
+server.listen(PORT, () =>
+  console.log(`Server is up and running on port ${PORT}`)
 );
